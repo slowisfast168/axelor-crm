@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://apps.axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://apps.axelor.com/xml/ns/object-views http://apps.axelor.com/xml/ns/object-views/object-views_0.9.xsd">
+
+
+
+	<menuitem name="crm-root" title="CRM" priority="180"
+		icon="img/icons/crm.png" groups="admins,erp"/>
+
+	<menuitem name="crm-root-create" parent="crm-root"
+		title="Create"/>
+		
+	<menuitem name="crm-root-create-task" parent="crm-root-create"
+		title="Task" action="crm.root.create.task" icon="img/icons/new.png"/>
+
+	<action-view name="crm.root.create.task" title="Task"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/new.png">
+		<view type="form" name="crm-task-form"/>
+		<view type="grid" name="crm-task-grid"/>
+		<context name="_typeSelect" expr="3"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+	</action-view>
+	
+	<menuitem name="crm-root-create-meeting" parent="crm-root-create"
+		title="Meeting" action="crm.root.create.meeting" icon="img/icons/new.png"/>
+
+	<action-view name="crm.root.create.meeting" title="Meeting"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/new.png">
+		<view type="form" name="meeting-form"/>
+		<view type="grid" name="meeting-grid"/>
+		<context name="_typeSelect" expr="2"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+	</action-view>
+	
+	<menuitem name="crm-root-create-call" parent="crm-root-create"
+		title="Call" action="crm.root.create.call" icon="img/icons/new.png"/>
+
+	<action-view name="crm.root.create.call" title="Call"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/new.png">
+		<view type="form" name="call-form"/>
+		<view type="grid" name="call-grid"/>
+		<context name="_typeSelect" expr="1"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+	</action-view>
+	
+	<menuitem name="crm-root-create-ticket" parent="crm-root-create"
+		title="Ticket" action="crm.root.create.ticket" icon="img/icons/new.png"/>
+
+	<action-view name="crm.root.create.ticket" title="Ticket"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/new.png">
+		<view type="form" name="ticket-form"/>
+		<view type="grid" name="ticket-grid"/>
+		<context name="_typeSelect" expr="5"/>
+		<context name="_prioritySelect" expr="2"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+	</action-view>
+	
+	<menuitem name="crm-root-task" parent="crm-root"
+		title="Tasks" action="crm.root.task" />
+
+	<action-view name="crm.root.task" title="Tasks"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/crm_small.png">
+		<view type="grid" name="crm-task-grid"/>
+		<view type="form" name="crm-task-form"/>
+		<view-param name="search-filters" value="tasks-filters"/>
+		<domain>self.typeSelect = 3</domain>
+		<context name="_typeSelect" expr="3"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserInfoService:getUserActiveTeam()"/>
+		<context name="_todayDateTime" expr="call:com.axelor.apps.base.service.administration.GeneralService:getTodayDateTime()"/>
+		<context name="_newDate" expr="eval: __datetime__.plusDays(5)"/>
+	</action-view>
+	
+	<menuitem name="crm-root-meeting" parent="crm-root"
+		title="Meetings" action="crm.root.meeting" />
+
+	<action-view name="crm.root.meeting" title="Meetings"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/crm_small.png">
+		<view type="grid" name="meeting-grid"/>
+		<view type="form" name="meeting-form"/>
+		<view type="calendar" name="meeting-calendar"/>
+		<view-param name="search-filters" value="meeting-filters"/>
+		<domain>self.typeSelect = 2</domain>
+		<context name="_typeSelect" expr="2"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserInfoService:getUserActiveTeam()"/>
+		<context name="_newDate" expr="eval: __datetime__.plusDays(5)"/>
+	</action-view>
+	
+	<menuitem name="crm-root-call" parent="crm-root"
+		title="Calls" action="crm.root.call" />
+
+	<action-view name="crm.root.call" title="Calls"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/crm_small.png">
+		<view type="grid" name="call-grid"/>
+		<view type="form" name="call-form"/>
+		<view-param name="search-filters" value="call-filters"/>
+		<domain>self.typeSelect = 1</domain>
+		<context name="_typeSelect" expr="1"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserInfoService:getUserActiveTeam()"/>
+		<context name="_todayDateTime" expr="call:com.axelor.apps.base.service.administration.GeneralService:getTodayDateTime()"/>
+	</action-view>
+	
+	<menuitem name="crm-root-ticket" parent="crm-root"
+		title="Tickets" action="crm.root.ticket" />
+
+	<action-view name="crm.root.ticket" title="Tickets"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/crm_small.png">
+		<view type="grid" name="ticket-grid"/>
+		<view type="form" name="ticket-form"/>
+		<view-param name="search-filters" value="ticket-filters"/>
+		<domain>self.typeSelect = 5</domain>
+		<context name="_typeSelect" expr="5"/>
+		<context name="_prioritySelect" expr="2"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserInfoService:getUserActiveTeam()"/>
+	</action-view>
+	
+	<menuitem name="crm-root-lead" parent="crm-root"
+		title="Leads" action="crm.root.lead" />
+
+	<action-view name="crm.root.lead" title="Leads"
+		model="com.axelor.apps.crm.db.Lead" icon="img/icons/crm_small.png">
+		<view type="grid" name="lead-grid"/>
+		<view type="form" name="lead-form"/>
+		<view-param name="search-filters" value="lead-filters"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserInfoService:getUserActiveTeam()"/>
+	</action-view>
+	
+	<menuitem name="crm-root-opportunity" parent="crm-root"
+		title="Opportunities" action="crm.root.opportunity" />
+
+	<action-view name="crm.root.opportunity" title="Opportunities"
+		model="com.axelor.apps.crm.db.Opportunity" icon="img/icons/crm_small.png">
+		<view type="grid" name="opportunity-grid"/>
+		<view type="form" name="opportunity-form"/>
+		<view-param name="search-filters" value="opportunity-filters"/>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserInfoService:getUserActiveTeam()"/>
+	</action-view>
+		
+	<menuitem name="crm-root-meeting-my-calendar" parent="crm-root"
+		title="My Calendar" action="crm.root.meeting.my.calendar" icon="img/icons/calendar-task.png"/>
+
+	<action-view name="crm.root.meeting.my.calendar" title="My Meetings Calendar"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/calendar-task.png">
+		<view type="calendar" name="event-calendar-color-by-calendar"/>
+		<view type="grid" name="event-grid"/>
+		<view type="form" name="event-form"/>
+		<domain>self.userInfo.internalUser.id = :_internalUser</domain>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+		<context name="_typeSelect" expr="2"/>
+	</action-view>
+	
+	<menuitem name="crm-root-meeting-team-calendar" parent="crm-root"
+		title="Team Calendar" action="crm.root.meeting.team.calendar" icon="img/icons/calendar-task.png"/>
+		
+	<action-view name="crm.root.meeting.team.calendar" title="Team Calendar"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/calendar-task.png">
+		<view type="calendar" name="event-calendar-color-by-user-info"/>
+		<view type="grid" name="event-grid"/>
+		<view type="form" name="event-form"/>
+		<domain>self.team = :_myActiveTeam</domain>
+		<context name="_internalUser" expr="eval: __user__.id"/>
+		<context name="_typeSelect" expr="2"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserInfoService:getUserActiveTeam()"/>
+	</action-view>
+	
+<!-- 	<action-view title="My Meetings Calendar" icon="img/icons/calendar-task.png" model="com.axelor.apps.crm.db.Event" name="crm.root.meeting.my.calendar"> -->
+<!-- 	    <view type="calendar" name="event-calendar"/> -->
+<!-- 	    <view type="form" name="event-form"/> -->
+<!-- 	    <domain>self.userInfo.id = :_internalUser OR self.id IN :_currentAttendee</domain> -->
+<!-- 	    <context name="_internalUser" expr="eval: __user__.id"/> -->
+	
+<!-- 	    <context name="_currentPartner" expr="eval: com.axelor.apps.base.db.UserInfo.all().filter('self.internalUser.id = ?1',__user__.id).fetchOne().partner"/> -->
+<!-- 	    <context name="_currentAttendee" expr="eval:com.axelor.apps.crm.db.EventAttendee.all().filter('self.contactPartner.id = ?1',com.axelor.apps.base.db.UserInfo.all().filter('self.internalUser.id = ?1',__user__.id).fetchOne().partner.id).fetch()"/> -->
+<!-- 	    <context name="_typeSelect" expr="2"/> -->
+<!-- 	</action-view> -->
+	
+	<!--  
+	<menuitem name="crm-root-meeting-team-calendar" parent="crm-root"
+		title="Shared calendar" action="crm.root.meeting.team.calendar" icon="img/icons/calendar-task.png"/>
+
+	<action-view name="crm.root.meeting.team.calendar" title="Shared calendar"
+		model="com.axelor.apps.crm.db.Event" icon="img/icons/calendar-task.png">
+		<view type="calendar" name="event-calendar"/>
+		<view type="grid" name="event-grid"/>
+		<view type="form" name="event-form"/>
+		<context name="_typeSelect" expr="2"/>
+	</action-view>
+	-->
+				
+	<menuitem name="crm-conf" parent="crm-root" title="Configuration"
+		icon="img/icons/parameter.png" />
+	
+	<menuitem name="crm-conf-crm-batch" parent="crm-conf"
+		title="Crm batches" action="crm.conf.crm.batch" />
+
+	<action-view name="crm.conf.crm.batch" title="Batches"
+		model="com.axelor.apps.crm.db.CrmBatch" icon="img/icons/parameter_small.png">
+		<view type="grid" />
+		<view type="form" />
+	</action-view>
+	
+	<menuitem name="crm-conf-lead-source" parent="crm-conf"
+		title="Leads Source" action="crm.conf.lead.source" />
+		
+	<action-view name="crm.conf.lead.source" title="Leads Source"
+		model="com.axelor.apps.base.db.Source" icon="img/icons/parameter_small.png">
+		<view type="grid" />
+		<view type="form" />
+	</action-view>
+
+	<menuitem name="crm-conf-meeting-type" parent="crm-conf"
+		title="Meeting Types" action="crm.conf.meeting.type" />
+
+	<action-view name="crm.conf.meeting.type" title="Meeting Types"
+		model="com.axelor.apps.crm.db.MeetingType" icon="img/icons/parameter_small.png">
+		<view type="grid" />
+		<view type="form" />
+	</action-view>
+	
+	<menuitem name="crm-conf-participant" parent="crm-conf"
+		title="Meeting Participants" action="crm.conf.participant" />
+
+	<action-view name="crm.conf.participant" title="Meeting Participants"
+		model="com.axelor.apps.crm.db.Participant" icon="img/icons/parameter_small.png">
+		<view type="grid" />
+		<view type="form" />
+	</action-view>
+	
+	<menuitem name="crm-conf-category" parent="crm-conf"
+		title="Event Categories" action="crm.conf.event.category" />
+
+	<action-view name="crm.conf.event.category" title="Event Categories"
+		model="com.axelor.apps.crm.db.EventCategory" icon="img/icons/parameter_small.png">
+		<view type="grid" name="event-category-conf-grid"/>
+		<view type="form" name="event-category-form"/>
+	</action-view>
+	
+	<menuitem name="crm-conf-calendar" parent="crm-conf"
+		title="Calendars" action="crm.conf.calendar" />
+
+	<action-view name="crm.conf.calendar" title="Calendars"
+		model="com.axelor.apps.crm.db.Calendar" icon="img/icons/parameter_small.png">
+		<view type="grid" name="calendar-grid"/>
+		<view type="form" name="calendar-form"/>
+	</action-view>
+	
+	<menuitem name="crm-conf-calendar-configuration" parent="crm-conf"
+		title="Calendar Configurations" action="crm.conf.calendar.configuration" />
+
+	<action-view name="crm.conf.calendar.configuration" title="Calendar Configurations"
+		model="com.axelor.apps.crm.db.CalendarConfiguration" icon="img/icons/parameter_small.png">
+		<view type="grid" name="calendar-configuration-grid"/>
+		<view type="form" name="calendar-configuration-form"/>
+	</action-view>
+	
+	<menuitem name="crm-conf-target-configuration" parent="crm-conf"
+		title="Targets configurations" action="crm.conf.target.configuration" />
+
+	<action-view name="crm.conf.target.configuration" title="Targets Configurations"
+		model="com.axelor.apps.crm.db.TargetConfiguration" icon="img/icons/parameter_small.png">
+		<view type="grid" />
+		<view type="form" />
+	</action-view>
+	
+	<menuitem name="crm-conf-target" parent="crm-conf"
+		title="Targets" action="crm.conf.target" />
+
+	<action-view name="crm.conf.target" title="Target"
+		model="com.axelor.apps.crm.db.Target" icon="img/icons/parameter_small.png">
+		<view type="grid" />
+		<view type="form" />
+	</action-view>
+
+
+<!-- <action-view title="Calendrier" icon="img/icons/calendar-task.png" model="com.axelor.apps.crm.db.Event" name="crm.root.event.calendar.1">  -->
+<!-- <view type="calendar" name="event-calendar"/> -->
+<!-- <view type="grid" name="event-grid"/> -->
+<!-- <view type="form" name="event-form"/> -->
+<!-- <domain>self.calendar in :_calendarSet</domain> -->
+<!-- <context name="_typeSelect" expr="2"/> -->
+<!-- <context name="_calendarSet" expr="eval: com.axelor.apps.crm.db.CalendarConfiguration.find(1).calendarSet"/> -->
+<!-- </action-view> -->
+	
+	<!-- Top Menu for Activity and Create Entry for opportunity.... -->
+	
+	<menuitem name="top-menu-crm-activities" priority="150" title="Activity" icon="img/icons/calendar.png" groups="admins,erp" top="true" left="false"/> 	
+
+	<menuitem name="top-menu-activity-my-calendar" icon="img/icons/crm_small.png" parent="top-menu-crm-activities" title="My Calendar" action="crm.root.meeting.my.calendar" />
+	
+	<menuitem name="top-menu-activity-team-calendar" icon="img/icons/calendar.png" parent="top-menu-crm-activities" 	title="My Team Calendar" action="crm.root.meeting.team.calendar" />
+	
+	<menuitem name="top-menu-activity-create-task" icon="img/icons/calendar.png" parent="top-menu-crm-activities" 	title="Create Task" action="crm.root.create.task" />
+	
+	<menuitem name="top-menu-activity-create-call" icon="img/icons/calendar.png" parent="top-menu-crm-activities" 	title="Create Call" action="crm.root.create.call" />
+	
+	<menuitem name="top-menu-activity-create-meeting" icon="img/icons/calendar.png" parent="top-menu-crm-activities" 	title="Create Meeting" action="crm.root.create.meeting" />
+		
+	
+	<menuitem name="top-menu-create-opportunity" parent="top-menu-utility" title="Create Opportunity" action="top.new.opportunity.view" />
+
+	<action-view name="top.new.opportunity.view" title="Create Opportunity" model="com.axelor.apps.crm.db.Opportunity" >
+		<view type="form" name="opportunity-form"/>
+		<view type="grid" name="opportunity-grid"/>
+	</action-view>
+	
+	<menuitem name="top-menu-create-lead" parent="top-menu-utility"	title="Create Lead" action="top.new.lead.view" />
+		
+	<action-view name="top.new.lead.view" title="Create Lead" icon="img/icons/address-book.png" model="com.axelor.apps.crm.db.Lead" >
+		<view type="form" name="lead-form" />
+		<view type="grid" name="lead-grid" />
+	</action-view>
+	
+	<menuitem name="top-prospection" title="Prospection" groups="admins,erp" top="true" left="false"/>
+	
+	<menuitem name="top-prospection-leads" title="Leads" action="top.propsection.leads" parent="top-prospection" groups="admins,erp" top="true" left="false"/> 	
+	<action-view name="top.propsection.leads" title="Leads" model="com.axelor.apps.crm.db.Lead" >
+		<view type="grid" name="lead-grid" />
+		<view type="form" name="lead-form" />
+	</action-view>
+	
+	<menuitem name="top-prospection-opportunity" title="Opportunities" action="top.prospection.opportunity" parent="top-prospection"  groups="admins,erp" top="true" left="false"/> 	
+	<action-view name="top.prospection.opportunity" title="Opportunities" model="com.axelor.apps.crm.db.Opportunity" >
+		<view type="grid" name="opportunity-grid" />
+		<view type="form" name="opportunity-form" />
+	</action-view>
+	
+	
+	  
+	<!-- CRM Dashboard Entry for CRM.... -->
+
+
+
+	<menuitem name="menu-crm-dashboards" priority="200" title="CRM Dashboards" icon="img/icons/chart.png" groups="admins,erp"/> 
+	
+	<menuitem name="portal.opportunities" parent="menu-crm-dashboards" title="Opportunity List Report" action="portal.opportunity.dashboard.view" />
+		
+	<action-view name="portal.opportunity.dashboard.view" title="Opportunity" icon="img/icons/crm_small.png">
+		<view type="portal" name="crm.opportunity.portal" />
+	</action-view>
+
+	<menuitem name="portal.opportunities.graph" parent="menu-crm-dashboards" title="Opportunity Chart Report" action="portal.opportunity.graph.dashboard.view" />
+		
+	<action-view name="portal.opportunity.graph.dashboard.view" title="Opportunity Report" icon="img/icons/calendar.png">
+		<view type="portal" name="crm.opportunity.graph.portal" />
+	</action-view>
+
+	<menuitem name="portal.crm.lead.graph" parent="menu-crm-dashboards" title="Lead Chart Report" action="portal.lead.graph.dashboard.view" />
+
+	<action-view name="portal.lead.graph.dashboard.view" title="Lead Graph Report" icon="img/icons/calendar.png">
+		<view type="portal" name="crm.lead.graph.portal" />
+	</action-view>
+	
+		
+ 	<menuitem name="portal.crm.event.graph" parent="menu-crm-dashboards" title="Event Chart Report" action="portal.event.graph.dashboard.view" /> 
+
+ 	<action-view name="portal.event.graph.dashboard.view" title="Event Graph Report" icon="img/icons/calendar.png"> 
+ 		<view type="portal" name="crm.event.graph.portal" />
+	</action-view> 
+	
+	<menuitem name="portal.base.crm.partner.graph" parent="menu-crm-dashboards" title="Partner List Report" action="portal.base.partner.list.dashboard.view" />
+
+	<action-view name="portal.base.partner.list.dashboard.view" title="Partner List Report">
+		<view type="portal" name="base.partner.list.portal" />
+	</action-view>
+	
+	<menuitem name="menu-target-user-dashboard" parent="menu-crm-dashboards"
+		title="Target user Dashboard" action="portal.target.user.dashboard.view"/>	
+	
+	<action-view name="portal.target.user.dashboard.view" title="Target user Dashboard"
+		icon="img/icons/crm_small.png">
+		<view type="portal" name="target.user.dashboard.portal" />
+		<context name="date" expr="eval: __date__"/>
+		<context name="user" expr="eval: __user__.id"/>
+	</action-view>
+	
+	<menuitem name="menu-target-team-dashboard" parent="menu-crm-dashboards"
+		title="Target team Dashboard" action="portal.target.team.dashboard.view"/>	
+
+	<action-view name="portal.target.team.dashboard.view" title="Target team Dashboard"
+		icon="img/icons/crm_small.png">
+		<view type="portal" name="target.team.dashboard.portal" />
+		<context name="team" expr="call:com.axelor.apps.base.service.user.UserInfoService:getUserActiveTeamId()"/>
+		<context name="date" expr="call:com.axelor.apps.base.service.administration.GeneralService:getTodayDate()"/>
+	</action-view>
+</object-views>

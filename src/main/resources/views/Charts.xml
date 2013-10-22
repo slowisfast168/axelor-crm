@@ -1,0 +1,1126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://apps.axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://apps.axelor.com/xml/ns/object-views http://apps.axelor.com/xml/ns/object-views/object-views_0.9.xsd">
+	  
+	  
+		
+	 <chart name="chart.dashboard.opportunities.sales.stage.amount.bar" title="Opportunities By Sale Stage">
+	    <dataset type="sql">
+	    <![CDATA[
+		SELECT
+          SUM(self.amount) AS amount,
+	      selection_item.title as _sales_stage
+	    FROM
+	        crm_opportunity self
+	    LEFT JOIN
+	        meta_select as selection ON selection.name = 'crm.opportunity.sales.stage.select'
+	    LEFT JOIN 
+	    	meta_select_item as selection_item ON selection_item.select_id = selection.id
+		WHERE
+			cast(selection_item.value as decimal) = self.sales_stage_select			
+	    GROUP BY
+		   _sales_stage
+		ORDER BY
+		   _sales_stage
+	    ]]>
+	    </dataset>
+	    <category key="_sales_stage" type="text"/>
+    	<series key="amount" type="bar"/>
+	 </chart>
+	 
+	  <chart name="chart.dashboard.opportunities.by.stage.type.bar" title="Pipeline by Stage and Type">
+	    <dataset type="sql">
+	    <![CDATA[
+		SELECT
+          SUM(self.amount) AS amount,
+	      selection_item.title as _sales_stage
+	    FROM
+	        crm_opportunity self
+	    LEFT JOIN
+	        meta_select as selection ON selection.name = 'crm.opportunity.sales.stage.select'
+	    LEFT JOIN 
+	    	meta_select_item as selection_item ON selection_item.select_id = selection.id
+		WHERE
+			cast(selection_item.value as decimal) = self.sales_stage_select	and self.sales_stage_select not in (9, 10)		
+	    GROUP BY
+		   _sales_stage
+		ORDER BY
+		   _sales_stage
+	    ]]>
+	    </dataset>
+	    <category key="_sales_stage" type="text"/>
+    	<series key="amount" type="bar"/>
+	 </chart>
+	
+	 <chart name="chart.dashboard.opportunities.source.amount.bar" title="Opportunities By Source">
+	    <dataset type="sql">
+		    <![CDATA[
+			SELECT
+	          SUM(self.amount) AS amount,
+		      Source.name as _source
+		    FROM
+		        crm_opportunity self
+		    LEFT JOIN
+		        base_source as Source ON self.source = Source.id
+		    GROUP BY
+			    _source
+			ORDER BY
+			    _source
+		    ]]>
+	    </dataset>
+	    <category key="_source" type="text"/>
+    	<series key="amount" type="bar"/>
+	  </chart>
+	  
+	   <chart name="chart.dashboard.opportunities.type.amount.bar" title="Opportunities By Source">
+	    <dataset type="sql">
+		    <![CDATA[
+			SELECT
+          		SUM(self.amount) AS amount,
+	      		opportunity_type.name as _opportunity_type
+	    	FROM
+	        	crm_opportunity self
+	    	LEFT JOIN
+	        	crm_opportunity_type as opportunity_type ON self.opportunity_type = opportunity_type.id
+	    	GROUP BY
+		    	_opportunity_type
+			ORDER BY
+		   		_opportunity_type
+		 ]]>
+	    </dataset>
+	    <category key="_opportunity_type" type="text"/>
+    	<series key="amount" type="bar"/>
+	  </chart>
+	  	
+	  <chart name="chart.dashboard.opportunities.won.by.leadsource.bar" title="Opportunities By Source">
+	    <dataset type="sql">
+		    <![CDATA[
+			SELECT
+	          count(self.id) AS lead_won,
+		      Source.name as _source
+		    FROM
+		        crm_opportunity self
+		    LEFT JOIN
+		        base_source as Source ON self.source = Source.id
+		    GROUP BY
+			    _source
+			ORDER BY
+			    _source
+		 ]]>
+	    </dataset>
+	    <category key="_source" type="text"/>
+    	<series key="lead_won" type="pie"/>
+	  </chart>
+	  	  
+	  	  <chart name="chart.dashboard.opportunities.won.by.salesman.bar" title="Opportunities By Source">
+	    <dataset type="sql">
+		    <![CDATA[
+			SELECT
+          		SUM(self.amount) AS amount,
+	      		sales_man.full_name as _sales_man
+	    	FROM
+	        	crm_opportunity self
+	    	LEFT JOIN
+	        	base_user_info as sales_man ON self.user_info = sales_man.id
+	    	GROUP BY
+		    	_sales_man
+			ORDER BY
+		   		_sales_man
+		 ]]>
+	    </dataset>
+	    <category key="_sales_man" type="text"/>
+    	<series key="amount" type="bar"/>
+	  </chart>
+	  
+	  <chart name="chart.opportunities.by.origin.by.stage" title="Opportunities By Origin By Stage">
+		<dataset type="jpql">
+		    <![CDATA[
+		    SELECT
+			    SUM(self.amount)    AS amount,
+			    self.source.name    AS source,
+			    self.salesStageSelect AS stage
+			FROM
+			    Opportunity self
+			GROUP BY
+			    self.salesStageSelect,
+			    self.source.name
+			ORDER BY
+			    self.salesStageSelect,
+			    self.source.name
+		    ]]>
+	    </dataset>
+	    <category key="source" type="text"/>
+	    <series key="amount" groupBy="stage" type="bar"/>
+	</chart>
+	
+	<chart name="chart.leads.by.source.bar" title="Leads by Source">
+		<dataset type="jpql">
+		    <![CDATA[
+		    SELECT
+		        COUNT(*) AS leads,
+		        self.source.name AS source
+		    FROM
+		        Lead self
+		    GROUP BY
+		    	self.source.name
+		    ORDER BY
+		        self.source.name
+		    ]]>
+	    </dataset>
+	    <category key="source" type="text"/>
+	    <series key="leads"  type="bar"/>
+	</chart>
+	
+	<chart name="chart.customers.by.country.bar" title="Customers by country">
+		<dataset type="jpql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(*) as partners,
+			    country.name as countryName
+			FROM
+			    Country country,Partner partner
+			WHERE 
+			    partner.mainInvoicingAddress.addressL7Country.id = country.id AND
+			    partner.isCustomer = true AND partner.customerTypeSelect = 3
+			GROUP BY
+			    country.id
+			ORDER BY
+			    country.name
+		    ]]>
+	    </dataset>
+	    <category key="countryName" type="text"/>
+	    <series key="partners"  type="bar"/>
+	</chart>
+	  	
+	 <chart name="chart.leads.by.team.by.status.bar" title="Leads by Team by Status">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.opportunity_amount) AS _opportunity_amount,
+			    team.name AS _team,
+			    selection_item.title as _status
+			FROM
+			   crm_lead as self
+			LEFT JOIN   
+			   base_team as team ON self.team = team.id
+			LEFT JOIN
+	        	meta_select as selection ON selection.name = 'crm.lead.status.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.status_select			
+	    	GROUP BY
+			  	_status,
+			  	_team
+			ORDER BY
+			   	_status,
+			   	_team	
+    ]]>
+	    </dataset>
+	    <category key="_team" type="text"/>
+	    <series key="_opportunity_amount" groupBy="_status" type="bar"/>
+	</chart>
+	
+	<chart name="chart.leads.by.salesman.by.status.bar" title="Leads by Salesman by Status">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.opportunity_amount)    AS _opportunity_amount,
+			    sales_man.full_name as _sales_man,
+			    selection_item.title as _status
+			FROM
+			    crm_lead as self
+			LEFT JOIN
+	        	base_user_info as sales_man ON self.user_info = sales_man.id
+			LEFT JOIN
+	        	meta_select as selection ON selection.name = 'crm.lead.status.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.status_select	and sales_man.full_name != ''	
+	    	GROUP BY
+			  	_status,
+			  	_sales_man
+			ORDER BY
+			   	_status,
+			   	_sales_man	
+			  ]]>
+	    </dataset>
+	    <category key="_sales_man" type="text"/>
+	    <series key="_opportunity_amount" groupBy="_status" type="bar"/>
+	</chart>
+	
+	<chart name="chart.calls.types.by.user.bar" title="Calls type by user">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)			AS 	_total_calls,
+			    sales_man.full_name		AS 	_sales_man,
+			    selection_item.title	AS 	_status
+			FROM
+			    crm_event 				AS self
+			LEFT JOIN
+	        	base_user_info as sales_man 		ON self.user_info = sales_man.id
+			LEFT JOIN
+	        	meta_select as selection 			ON selection.name = 'crm.event.call.status.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item 	ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.call_status_select			
+	    	GROUP BY
+			  	_status,
+			  	_sales_man
+			ORDER BY
+			   	_status,
+			   	_sales_man	
+			  ]]>
+	    </dataset>
+	    <category key="_sales_man" type="text"/>
+	    <series key="_total_calls" groupBy="_status" type="bar"/>
+	</chart>
+	  	
+	 <chart name="chart.calls.types.by.team.bar" title="Calls type by team">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)    		AS 	_total_calls,
+			    team.name 				AS 	_team,
+			    selection_item.title 	AS 	_status
+			FROM
+			    crm_event as self
+			LEFT JOIN
+	        	base_team as team 					ON self.team = team.id
+			LEFT JOIN
+	        	meta_select as selection 			ON selection.name = 'crm.event.call.status.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item 	ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.call_status_select			
+	    	GROUP BY
+			  	_status,
+			  	_team
+			ORDER BY
+			   	_team,
+			   	_status	
+			  ]]>
+	    </dataset>
+	    <category key="_team" type="text"/>
+	    <series key="_total_calls" groupBy="_status" type="bar"/>
+	</chart>  	
+	  	
+	<chart name="chart.calls.types.by.team.by.user.bar" title="Calls by team by user">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)    AS _total_calls,
+			    sales_man.full_name as _sales_man,
+			    team.name as _team
+			FROM
+			    crm_event as self
+			LEFT JOIN
+	        	base_user_info as sales_man ON self.user_info = sales_man.id
+			LEFT JOIN
+	        	base_team as team ON self.team = team.id
+	    	GROUP BY
+			  	_team,
+			  	_sales_man
+			ORDER BY
+			   	_team,
+			   	_sales_man	
+			  ]]>
+	    </dataset>
+	    <category key="_team" type="text"/>
+	    <series key="_total_calls" groupBy="_sales_man" type="bar"/>
+	</chart> 
+	
+	
+	<chart name="chart.open.tickets.by.priority.bar" title="Open tickets by priority">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)    		AS 	_total_calls,
+			    selection_item.title 	AS 	_priority
+			FROM
+			    crm_event as self
+			LEFT JOIN
+	        	meta_select as selection 			ON selection.name = 'crm.event.ticket.priority.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item 	ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.priority_select and self.ticket_status_select != 5		
+	    	GROUP BY
+			  	_priority
+			ORDER BY
+			   	_priority	
+			  ]]>
+	    </dataset>
+	    <category key="_priority" type="text"/>
+	    <series key="_total_calls" type="bar"/>
+	</chart>  	
+	
+	<chart name="chart.open.ticket.priority.distribution.bar" title="Ticket distribution by Priority">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    cast(cast(COUNT(*) as decimal)/(select Count(*) from crm_event as event where event.ticket_status_select !=5 and event.priority_select > 0) * 100 as decimal (5,2)) AS 	_total_calls,
+			    selection_item.title 	AS 	_priority
+			FROM
+			    crm_event as self
+			LEFT JOIN
+	        	meta_select as selection 			ON selection.name = 'crm.event.ticket.priority.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item 	ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.priority_select and self.ticket_status_select != 5		
+	    	GROUP BY
+			  	_priority
+			ORDER BY
+			   	_priority	
+			  ]]>
+	    </dataset>
+	    <category key="_priority" type="text"/>
+	    <series key="_total_calls" type="pie"/>
+	</chart>  	
+	
+	
+	<chart name="chart.open.tickets.by.status.bar" title="Open tickets by status">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)    		AS 	_total_calls,
+			    selection_item.title 	AS 	_status
+			FROM
+			    crm_event as self
+			LEFT JOIN
+	        	meta_select as selection 			ON selection.name = 'crm.event.status.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item 	ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.status_select and self.ticket_status_select != 5		
+	    	GROUP BY
+			  	_status
+			ORDER BY
+			   	_status	
+			  ]]>
+	    </dataset>
+	    <category key="_status" type="text"/>
+	    <series key="_total_calls" type="bar"/>
+	</chart>  	
+	  	
+	  	
+	  <chart name="chart.agents.by.open.cases.bar" title="Top agents by Open Tickets">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)    		AS 	_total_calls,
+			    sales_man.full_name as _sales_man,
+			    selection_item.title 	AS 	_status
+			FROM
+			  	crm_event as self
+			LEFT JOIN
+	        	base_user_info as sales_man ON self.user_info = sales_man.id
+			LEFT JOIN
+	        	meta_select as selection 			ON selection.name = 'crm.event.status.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item 	ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.status_select and self.ticket_status_select != 5		
+	    	GROUP BY
+			  	_status,
+			  	_sales_man
+			ORDER BY
+			   	_status,	
+			   	_sales_man
+			  ]]>
+	    </dataset>
+	    <category key="_status" type="text"/>
+	    <series key="_total_calls" type="bar"/>
+	</chart>  	
+	
+	<chart name="chart.customer.by.open.cases.bar" title="Top clients by Open Cases">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)    		AS 	_total_calls,
+			    partner.full_name 		AS 	_partner,
+			    selection_item.title 	AS 	_status
+			FROM
+			  	crm_event as self
+			LEFT JOIN
+	        	base_partner as partner ON self.client_partner = partner.id
+			LEFT JOIN
+	        	meta_select as selection 			ON selection.name = 'crm.event.status.select'
+	    	LEFT JOIN 
+	    		meta_select_item as selection_item 	ON selection_item.select_id = selection.id
+			WHERE
+				cast(selection_item.value as decimal) = self.status_select and self.ticket_status_select != 5		
+	    	GROUP BY
+			  	_status,
+			  	_partner
+			ORDER BY
+			   	_status,	
+			   	_partner
+			  ]]>
+	    </dataset>
+	    <category key="_partner" type="text"/>
+	    <series key="_total_calls" groupBy="_status"  type="bar"/>
+	</chart>  	
+	
+	<chart name="chart.leads.by.country.bar" title="Leads by Country">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)    	AS 	_total_leads,
+			    country.name 		AS 	_country
+			FROM
+			  	crm_lead as self
+			LEFT JOIN
+	        	base_country as country ON self.primary_country = country.id
+	    	GROUP BY
+			  	_country
+			ORDER BY
+			   	_country
+			  ]]>
+	    </dataset>
+	    <category key="_country" type="text"/>
+	    <series key="_total_leads"  type="bar"/>
+	</chart>  			
+	<chart name="chart.partner.by.industry.sector.bar" title="Partners by Industry Sector">
+	    <dataset type="sql">
+	    <![CDATA[
+		SELECT
+          COUNT(self.id) AS _total_partner,
+	      selection_item.title as _industry_sector
+	    FROM
+	        base_partner as self
+	    LEFT JOIN
+	        meta_select as selection ON selection.name = 'partner.industry.sectory.select'
+	    LEFT JOIN 
+	    	meta_select_item as selection_item ON selection_item.select_id = selection.id
+		WHERE
+			cast(selection_item.value as decimal) = self.industry_sector_select	and self.is_contact != true		
+	    GROUP BY
+		   _industry_sector
+		ORDER BY
+		   _industry_sector
+	    ]]>
+	    </dataset>
+	    <category key="_industry_sector" type="text"/>
+    	<series key="_total_partner" type="pie"/>
+	 </chart>
+	<!-- 
+	 <chart name="chart.due.open.ticket.gauge.bar" title="Due Open Tickets">
+		<dataset type="sql">
+		    <![CDATA[
+		    SELECT
+			    COUNT(self.id)    		AS 	_total_ticket,
+			    (select Count(id) from crm_event as open_ticket where open_ticket.ticket_status_select != 5) as _open_ticket
+			FROM
+			  	crm_event as self
+			  ]]>
+	    </dataset>
+	   	<category key="_open_ticket" type="text"/>
+	    <config name="min" value="0"/>
+    	<config name="max" value="100"/>
+	    <series key="_total_ticket" type="gauge"/>
+	</chart>  	 -->
+	
+	
+	<!-- 	  Target user charts -->
+	  
+	   <chart name="chart.user.call.target.gauge" title="Calls emitted target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.callEmittedNumber*100/self.callEmittedNumberTarget   		AS 	_callEmittedNumber
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user and self.fromDate <= :date and self.toDate >= :date and self.callEmittedNumberTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_callEmittedNumber" type="text"/>
+		    <series key="_callEmittedNumber" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.user.call.target.bar" title="Call emitted historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.callEmittedNumber)           AS     _callEmittedNumber,
+				    SUM(self.callEmittedNumberTarget)           AS     _callEmittedNumberTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_callEmittedNumber" type="bar"/>
+<!-- 		    <series key="_callEmittedNumberTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.user.meeting.target.gauge" title="Meetings number target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.meetingNumber*100/self.meetingNumberTarget   		AS 	_meetingNumber
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user and self.fromDate <= :date and self.toDate >= :date and self.meetingNumberTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_meetingNumber" type="text"/>
+		    <series key="_meetingNumber" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.user.meeting.target.bar" title="Meetings number historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.meetingNumber)           AS     _meetingNumber,
+				    SUM(self.meetingNumberTarget)           AS     _meetingNumberTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_meetingNumber" type="bar"/>
+<!-- 		    <series key="_meetingNumberTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.user.opportunity.amount.won.target.gauge" title="Opportunities amount won target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.opportunityAmountWon*100/self.opportunityAmountWonTarget   		AS 	_opportunityAmountWon
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user and self.fromDate <= :date and self.toDate >= :date and self.opportunityAmountWonTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_opportunityAmountWon" type="text"/>
+		    <series key="_opportunityAmountWon" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.user.opportunity.amount.won.target.bar" title="Opportunities amount won historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.opportunityAmountWon)           AS     _opportunityAmountWon,
+				    SUM(self.opportunityAmountWonTarget)           AS     _opportunityAmountWonTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_opportunityAmountWon" type="bar"/>
+<!-- 		    <series key="_opportunityAmountWonTarget" type="bar"/> -->
+		</chart>
+	
+		<chart name="chart.user.opportunity.created.number.target.gauge" title="Opportunities created number target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.opportunityCreatedNumber*100/self.opportunityCreatedNumberTarget 		AS 	_opportunityCreatedNumber
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user and self.fromDate <= :date and self.toDate >= :date and self.opportunityCreatedNumberTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_opportunityCreatedNumber" type="text"/>
+		    <series key="_opportunityCreatedNumber" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.user.opportunity.created.number.target.bar" title="Opportunities created number historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.opportunityCreatedNumber)           AS     _opportunityCreatedNumber,
+				    SUM(self.opportunityCreatedNumberTarget)           AS     _opportunityCreatedNumberTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_opportunityCreatedNumber" type="bar"/>
+<!-- 		    <series key="_opportunityCreatedNumberTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.user.opportunity.created.won.target.gauge" title="Opportunities created won target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.opportunityCreatedWon*100/self.opportunityCreatedWonTarget   		AS 	_opportunityCreatedWon
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user and self.fromDate <= :date and self.toDate >= :date and self.opportunityCreatedWonTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_opportunityCreatedWon" type="text"/>
+		    <series key="_opportunityCreatedWon" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.user.opportunity.created.won.target.bar" title="Opportunities created won historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.opportunityCreatedWon)           AS     _opportunityCreatedWon,
+				    SUM(self.opportunityCreatedWonTarget)           AS     _opportunityCreatedWonTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_opportunityCreatedWon" type="bar"/>
+<!-- 		    <series key="_opportunityCreatedWonTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.user.sales.order.amount.won.target.gauge" title="Sales orders amount won target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.salesOrderAmountWon*100/self.salesOrderAmountWonTarget   		AS 	_salesOrderAmountWon
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user and self.fromDate <= :date and self.toDate >= :date and self.salesOrderAmountWonTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_salesOrderAmountWon" type="text"/>
+		    <series key="_salesOrderAmountWon" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.user.sales.order.amount.won.target.bar" title="Sales orders amount won historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.salesOrderAmountWon)           AS     _salesOrderAmountWon,
+				    SUM(self.salesOrderAmountWonTarget)           AS     _salesOrderAmountWonTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_salesOrderAmountWon" type="bar"/>
+<!-- 		    <series key="_salesOrderAmountWonTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.user.sales.order.created.number.target.gauge" title="Sales orders created number target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.salesOrderCreatedNumber*100/self.salesOrderCreatedNumberTarget   		AS 	_salesOrderCreatedNumber
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user and self.fromDate <= :date and self.toDate >= :date and self.salesOrderCreatedNumberTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_salesOrderCreatedNumber" type="text"/>
+		    <series key="_salesOrderCreatedNumber" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.user.sales.order.created.number.target.bar" title="Sales orders created number historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.salesOrderCreatedNumber)           AS     _salesOrderCreatedNumber,
+				    SUM(self.salesOrderCreatedNumberTarget)           AS     _salesOrderCreatedNumberTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_salesOrderCreatedNumber" type="bar"/>
+<!-- 		    <series key="_salesOrderCreatedNumberTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.user.sales.order.created.won.target.gauge" title="Sales orders created won target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.salesOrderCreatedWon*100/self.salesOrderCreatedWonTarget   		AS 	_salesOrderCreatedWon
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user and self.fromDate <= :date and self.toDate >= :date and self.salesOrderCreatedWonTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_salesOrderCreatedWon" type="text"/>
+		    <series key="_salesOrderCreatedWon" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.user.sales.order.created.won.target.bar" title="Sales orders created won historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.salesOrderCreatedWon)           AS     _salesOrderCreatedWon,
+				    SUM(self.salesOrderCreatedWonTarget)           AS     _salesOrderCreatedWonTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.userInfo.internalUser.id = :user
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_salesOrderCreatedWon" type="bar"/>
+<!-- 		    <series key="_salesOrderCreatedWonTarget" type="bar"/> -->
+		</chart>
+		
+		
+<!--   Target team charts -->
+	  
+	   <chart name="chart.team.call.target.gauge" title="Calls emitted target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.callEmittedNumber*100/self.callEmittedNumberTarget   		AS 	_callEmittedNumber
+				FROM Target self 
+				WHERE self.team.id = :team and self.fromDate <= :date and self.toDate >= :date and self.callEmittedNumberTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_callEmittedNumber" type="text"/>
+		    <series key="_callEmittedNumber" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.team.call.target.bar" title="Calls emitted historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.callEmittedNumber)           AS     _callEmittedNumber,
+				    SUM(self.callEmittedNumberTarget)           AS     _callEmittedNumberTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.team.id = :team
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_callEmittedNumber" type="bar"/>
+<!-- 		    <series key="_callEmittedNumberTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.team.meeting.target.gauge" title="Meetings number target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.meetingNumber*100/self.meetingNumberTarget   		AS 	_meetingNumber
+				FROM Target self 
+				WHERE self.team.id = :team and self.fromDate <= :date and self.toDate >= :date and self.meetingNumberTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_meetingNumber" type="text"/>
+		    <series key="_meetingNumber" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.team.meeting.target.bar" title="Meeting number historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.meetingNumber)           AS     _meetingNumber,
+				    SUM(self.meetingNumberTarget)           AS     _meetingNumberTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.team.id = :team
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_meetingNumber" type="bar"/>
+<!-- 		    <series key="_meetingNumberTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.team.opportunity.amount.won.target.gauge" title="Opportunities amount won target competed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.opportunityAmountWon*100/self.opportunityAmountWonTarget   		AS 	_opportunityAmountWon
+				FROM Target self 
+				WHERE self.team.id = :team and self.fromDate <= :date and self.toDate >= :date and self.opportunityAmountWonTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_opportunityAmountWon" type="text"/>
+		    <series key="_opportunityAmountWon" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.team.opportunity.amount.won.target.bar" title="Opportunities amount won historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.opportunityAmountWon)           AS     _opportunityAmountWon,
+				    SUM(self.opportunityAmountWonTarget)           AS     _opportunityAmountWonTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.team.id = :team
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_opportunityAmountWon" type="bar"/>
+<!-- 		    <series key="_opportunityAmountWonTarget" type="bar"/> -->
+		</chart>
+	
+		<chart name="chart.team.opportunity.created.number.target.gauge" title="Opportunities created number target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.opportunityCreatedNumber*100/self.opportunityCreatedNumberTarget   		AS 	_opportunityCreatedNumber
+				FROM Target self 
+				WHERE self.team.id = :team and self.fromDate <= :date and self.toDate >= :date and self.opportunityCreatedNumberTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_opportunityCreatedNumber" type="text"/>
+		    <series key="_opportunityCreatedNumber" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.team.opportunity.created.number.target.bar" title="Opportunities created number historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.opportunityCreatedNumber)           AS     _opportunityCreatedNumber,
+				    SUM(self.opportunityCreatedNumberTarget)           AS     _opportunityCreatedNumberTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.team.id = :team
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_opportunityCreatedNumber" type="bar"/>
+<!-- 		    <series key="_opportunityCreatedNumberTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.team.opportunity.created.won.target.gauge" title="Opportunities created won target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.opportunityCreatedWon*100/self.opportunityCreatedWonTarget   		AS 	_opportunityCreatedWon
+				FROM Target self 
+				WHERE self.team.id = :team and self.fromDate <= :date and self.toDate >= :date and self.opportunityCreatedWonTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_opportunityCreatedWon" type="text"/>
+		    <series key="_opportunityCreatedWon" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.team.opportunity.created.won.target.bar" title="Opportunities created won historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.opportunityCreatedWon)           AS     _opportunityCreatedWon,
+				    SUM(self.opportunityCreatedWonTarget)           AS     _opportunityCreatedWonTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.team.id = :team
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_opportunityCreatedWon" type="bar"/>
+<!-- 		    <series key="_opportunityCreatedWonTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.team.sales.order.amount.won.target.gauge" title="Sales orders amount won target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.salesOrderAmountWon*100/self.salesOrderAmountWonTarget   		AS 	_salesOrderAmountWon
+				FROM Target self 
+				WHERE self.team.id = :team and self.fromDate <= :date and self.toDate >= :date and self.salesOrderAmountWonTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_salesOrderAmountWon" type="text"/>
+		    <series key="_salesOrderAmountWon" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.team.sales.order.amount.won.target.bar" title="Sales orders amount won historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.salesOrderAmountWon)           AS     _salesOrderAmountWon,
+				    SUM(self.salesOrderAmountWonTarget)           AS     _salesOrderAmountWonTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.team.id = :team
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_salesOrderAmountWon" type="bar"/>
+<!-- 		    <series key="_salesOrderAmountWonTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.team.sales.order.created.number.target.gauge" title="Sales orders created number target completed (%)">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.salesOrderCreatedNumber*100/self.salesOrderCreatedNumberTarget   		AS 	_salesOrderCreatedNumber
+				FROM Target self 
+				WHERE self.team.id = :team and self.fromDate <= :date and self.toDate >= :date and self.salesOrderCreatedNumberTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_salesOrderCreatedNumber" type="text"/>
+		    <series key="_salesOrderCreatedNumber" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.team.sales.order.created.number.target.bar" title="Sales orders created number historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.salesOrderCreatedNumber)           AS     _salesOrderCreatedNumber,
+				    SUM(self.salesOrderCreatedNumberTarget)           AS     _salesOrderCreatedNumberTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.team.id = :team
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_salesOrderCreatedNumber" type="bar"/>
+<!-- 		    <series key="_salesOrderCreatedNumberTarget" type="bar"/> -->
+		</chart>
+		
+		<chart name="chart.team.sales.order.created.won.target.gauge" title="Sales orders created won target completed">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    self.salesOrderCreatedWon*100/self.salesOrderCreatedWonTarget   		AS 	_salesOrderCreatedWon
+				FROM Target self 
+				WHERE self.team.id = :team and self.fromDate <= :date and self.toDate >= :date and self.salesOrderCreatedWonTarget > 0
+				  ]]>
+		    </dataset>
+		    <category key="_salesOrderCreatedWon" type="text"/>
+		    <series key="_salesOrderCreatedWon" type="gauge"/>
+		    <config name="min" value="0"/>
+	    	<config name="max" value="200"/>
+		</chart>
+		
+		<chart name="chart.team.sales.order.created.won.target.bar" title="Sales orders created won historical">
+			<dataset type="jpql">
+			    <![CDATA[
+			    SELECT
+				    SUM(self.salesOrderCreatedWon)           AS     _salesOrderCreatedWon,
+				    SUM(self.salesOrderCreatedWonTarget)           AS     _salesOrderCreatedWonTarget,
+				    self.periodTypeSelect as _period,
+				    self.toDate as _toDate
+				FROM Target self 
+				WHERE self.team.id = :team
+				GROUP BY
+				    self.periodTypeSelect,
+				    self.toDate
+				ORDER BY 
+				     self.toDate
+				  ]]>
+		    </dataset>
+		    <category key="_toDate" type="text"/>
+		    <series key="_salesOrderCreatedWon" type="bar"/>
+<!-- 		    <series key="_salesOrderCreatedWonTarget" type="bar"/> -->
+		</chart>
+</object-views>

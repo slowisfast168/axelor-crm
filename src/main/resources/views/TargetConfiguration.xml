@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://apps.axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://apps.axelor.com/xml/ns/object-views http://apps.axelor.com/xml/ns/object-views/object-views_0.9.xsd">
+    
+    <grid name="target-configuration-grid" title="Target configurations" model="com.axelor.apps.crm.db.TargetConfiguration">
+        <field name="name"/>
+        <field name="code"/>
+        <field name="userInfo" />
+       	<field name="team"/>
+    </grid>
+    
+    <form name="target-configuration-form" title="Target configuration" model="com.axelor.apps.crm.db.TargetConfiguration" cols="4">
+	    <group colSpan="4">
+	        <field name="name"/>
+	        <field name="code"/>    
+	    </group>
+	    <group title="Concerns" colSpan="4">
+	        <field name="userInfo" showIf="team == null"/>
+	        <field name="team" showIf="userInfo == null"/>    
+	    </group>
+	    <group title="Period" colSpan="4">
+	        <field name="periodTypeSelect"/>
+	        <break/>
+	        <field name="fromDate"/>
+	        <field name="toDate"/>
+	    </group>
+	    <group title="Targets" colSpan="4" cols="6" >
+	        <group colSpan="2">
+	            <separator title="Opportunities" colSpan="2"/>
+	            <break/>
+	            <field name="opportunityAmountWon"/>
+	            <break/>
+	            <field name="opportunityCreatedNumber"/>
+	            <break/>
+	            <field name="opportunityCreatedWon"/>
+	        </group>
+	        <group colSpan="2">
+	            <separator title="Calls" colSpan="2"/>
+	            <break/>
+	            <field name="callEmittedNumber"/>
+	        </group>
+	        <group colSpan="2">
+	            <separator title="Meetings" colSpan="2"/>
+	            <break/>
+	            <field name="meetingNumber"/>
+	        </group>
+	        <!--         <group title="Sales order" colSpan="2"> -->
+<!--         	<field name="salesOrderAmountWon"/> -->
+<!--         	<field name="salesOrderCreatedNumber"/> -->
+<!--         	<field name="salesOrderCreatedWon"/> -->
+<!--         </group> -->
+	    </group>
+	</form>
+    
+</object-views>
