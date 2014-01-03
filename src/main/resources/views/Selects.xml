@@ -53,7 +53,7 @@
 		<option value="com.axelor.apps.base.db.Product">Product</option>
 		<option value="com.axelor.apps.crm.db.Event">Event</option>
 		<option value="com.axelor.apps.supplychain.db.SalesOrder">Quote/Order</option>
-		<option value="com.axelor.apps.organisation.db.Project">Project/Affair</option>
+		<option value="com.axelor.apps.organisation.db.Project">Project/Business</option>
 		<option value="com.axelor.apps.organisation.db.Task">Task (Project)</option>
 	</selection>
 	
@@ -138,7 +138,6 @@
 	
 	<selection name="crm.event.reminder.type.select">
 		<option value="1">Email</option>
-		<option value="2">SMS</option>
 	</selection>
 	
 	<selection name="crm.eventReminder.duration.type.select">

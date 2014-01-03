@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  *
  * The contents of this file are subject to the Common Public
  * Attribution License Version 1.0 (the “License”); you may not use
@@ -26,58 +26,65 @@
  * the Original Code is Axelor.
  *
  * All portions of the code written by Axelor are
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  */
 package com.axelor.apps.crm.service;
 
 import org.joda.time.Duration;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.axelor.apps.base.db.Partner;
+import com.axelor.apps.crm.db.Event;
+import com.axelor.apps.crm.db.Lead;
+import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 
 public class EventService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(EventService.class);
 	
+	@Inject
+	private EventAttendeeService eventAttendeeService;
+
 	public Duration computeDuration(LocalDateTime startDateTime, LocalDateTime endDateTime)  {
 		
 		return new Interval(startDateTime.toDateTime(), endDateTime.toDateTime()).toDuration();
 		
 	}
 	
-	public int getHoursDuration(Duration duration)  {
+	public int getDuration(Duration duration)  {
 		
-		return duration.toStandardHours().getHours();
-		
-	}
-	
-	public int getMinutesDuration(Duration duration)  {
-		
-		int minutes = duration.toStandardMinutes().getMinutes() % 60;
-		
-		LOG.debug("Minutes : {}", minutes);	
-		
-		if(minutes >= 53 && minutes < 8)  {  return 00;  }
-		else if(minutes >= 8 && minutes < 23)  {  return 15;  }
-		else if(minutes >= 23 && minutes < 38)  {  return 30;  }
-		else if(minutes >= 38 && minutes < 53)  {  return 45;  }
-		
-		return 00;
+		return duration.toStandardSeconds().getSeconds();
 		
 	}
 	
-	public LocalDateTime computeStartDateTime(int durationHours, int durationMinutes, LocalDateTime endDateTime)  {
+	public LocalDateTime computeStartDateTime(int duration, LocalDateTime endDateTime)  {
 			
-		return endDateTime.minusHours(durationHours).minusMinutes(durationMinutes);	
+		return endDateTime.minusSeconds(duration);	
 		
 	}
 	
-	public LocalDateTime computeEndDateTime(LocalDateTime startDateTime, int durationHours, int durationMinutes)  {
+	public LocalDateTime computeEndDateTime(LocalDateTime startDateTime, int duration)  {
 		
-		return startDateTime.plusHours(durationHours).plusMinutes(durationMinutes);
+		return startDateTime.plusSeconds(duration);
 		
 	}
+	
+	@Transactional
+	public void saveEvent(Event event){
+		event.save();
+	}
+	
+	
+	@Transactional
+	public void addLeadAttendee(Event event, Lead lead, Partner contactPartner)  {
+		
+		event.addEventAttendeeListItem(eventAttendeeService.createEventAttendee(event, lead, contactPartner));
+		event.save();
+		
+	}
+	
+	
+	
 	
 	
 }

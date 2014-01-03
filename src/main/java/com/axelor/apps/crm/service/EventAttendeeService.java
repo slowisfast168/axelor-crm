@@ -30,29 +30,41 @@
  */
 package com.axelor.apps.crm.service;
 
-import com.axelor.apps.base.db.Batch;
-import com.axelor.apps.crm.service.batch.BatchEventReminderMessage;
-import com.axelor.apps.message.service.MailAccountService;
-import com.axelor.apps.message.service.MessageService;
-import com.google.inject.Injector;
+import com.axelor.apps.base.db.Partner;
+import com.axelor.apps.crm.db.Event;
+import com.axelor.apps.crm.db.EventAttendee;
+import com.axelor.apps.crm.db.Lead;
 
-public class EventReminderThread extends Thread {
+public class EventAttendeeService {
+
 	
-	private Batch batch;
-	private Injector injector;
-
-	public EventReminderThread(Batch batch, Injector injector) {
-		this.batch = batch;
-		this.injector = injector;
-	}
-
-	@Override
-	public void run() {
+	public EventAttendee createEventAttendee(Event event, Lead lead, Partner contactPartner)  {
 		
-		new BatchEventReminderMessage(injector.getInstance(MessageService.class), injector.getInstance(MailAccountService.class)).process();
+		EventAttendee eventAttendee = new EventAttendee();
+		eventAttendee.setEvent(event);
+		eventAttendee.setLead(lead);
+		eventAttendee.setContactPartner(contactPartner);
+
+		eventAttendee.setName(this.getName(eventAttendee));
+		
+		return eventAttendee;
+		
 	}
 	
+	public String getName(EventAttendee eventAttendee)  {
+		
+		if(eventAttendee.getContactPartner() != null)  {
+			return eventAttendee.getContactPartner().getFullName();
+		}
+		if(eventAttendee.getLead() != null)  {
+			return eventAttendee.getLead().getFullName();
+		}
+		
+		return "";
+		
+	}
+ 	
 	
 	
-
+	
 }

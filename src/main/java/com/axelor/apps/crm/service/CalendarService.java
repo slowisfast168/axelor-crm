@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  *
  * The contents of this file are subject to the Common Public
  * Attribution License Version 1.0 (the “License”); you may not use
@@ -26,7 +26,7 @@
  * the Original Code is Axelor.
  *
  * All portions of the code written by Axelor are
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  */
 package com.axelor.apps.crm.service;
 
@@ -418,13 +418,8 @@ public class CalendarService {
 		
 		List<Attendee> attendeeList = new ArrayList<Attendee>();
 		
-		if(event.getContactEventAttendeeList() != null)  {
-			for(EventAttendee eventAttendee : event.getContactEventAttendeeList())  {
-				attendeeList.add(this.createAttendee(eventAttendee));
-			}
-		}
-		if(event.getLeadEventAttendeeList() != null)  {
-			for(EventAttendee eventAttendee : event.getLeadEventAttendeeList())  {
+		if(event.getEventAttendeeList() != null)  {
+			for(EventAttendee eventAttendee : event.getEventAttendeeList())  {
 				attendeeList.add(this.createAttendee(eventAttendee));
 			}
 		}

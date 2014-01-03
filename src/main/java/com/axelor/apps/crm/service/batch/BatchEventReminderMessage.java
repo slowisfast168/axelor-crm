@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  *
  * The contents of this file are subject to the Common Public
  * Attribution License Version 1.0 (the “License”); you may not use
@@ -26,7 +26,7 @@
  * the Original Code is Axelor.
  *
  * All portions of the code written by Axelor are
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  */
 package com.axelor.apps.crm.service.batch;
 
@@ -35,22 +35,15 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.axelor.apps.base.db.Batch;
-import com.axelor.apps.base.db.Company;
 import com.axelor.apps.crm.db.Event;
-import com.axelor.apps.crm.db.EventReminder;
-import com.axelor.apps.crm.service.EventReminderService;
-import com.axelor.apps.crm.service.EventReminderThread;
 import com.axelor.apps.message.service.MailAccountService;
 import com.axelor.apps.message.service.MessageService;
 import com.axelor.db.JPA;
 import com.axelor.exception.db.IException;
 import com.axelor.exception.service.TraceBackService;
-import com.google.inject.Injector;
 
 public class BatchEventReminderMessage extends BatchStrategy {
 

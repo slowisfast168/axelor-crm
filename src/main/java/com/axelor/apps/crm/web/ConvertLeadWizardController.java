@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  *
  * The contents of this file are subject to the Common Public
  * Attribution License Version 1.0 (the “License”); you may not use
@@ -26,7 +26,7 @@
  * the Original Code is Axelor.
  *
  * All portions of the code written by Axelor are
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  */
 package com.axelor.apps.crm.web;
 
@@ -77,14 +77,16 @@ public class ConvertLeadWizardController {
 			contactPartner = convertLeadWizardService.createPartner((Map<String, Object>) context.get("contactPartner"));
 		}
 		else  if(context.get("selectContact") != null) {
-			contactPartner = Partner.find((Long) context.get("selectContactPartner"));
+			Map<String, Object> selectContactContext = (Map<String, Object>) context.get("selectContact");
+			contactPartner = Partner.find(((Integer) selectContactContext.get("id")).longValue());
 		}
 		
 		if(context.get("hasConvertIntoPartner") != null && (Boolean) context.get("hasConvertIntoPartner")) {
 			partner = convertLeadWizardService.createPartner((Map<String, Object>) context.get("partner"));
 		}
 		else  if(context.get("selectPartner") != null) {
-			partner = Partner.find((Long) context.get("selectPartner"));
+			Map<String, Object> selectPartnerContext = (Map<String, Object>) context.get("selectPartner");
+			partner = Partner.find(((Integer) selectPartnerContext.get("id")).longValue());
 		}
 		
 		if(context.get("hasConvertIntoOpportunity") != null && (Boolean) context.get("hasConvertIntoOpportunity")) {
@@ -101,6 +103,8 @@ public class ConvertLeadWizardController {
 		}
 		
 		leadService.convertLead(lead, partner, contactPartner, opportunity, callEvent, meetingEvent, taskEvent);
+		
+		response.setFlash("Prospect converti");
 	}
 	
 	

@@ -30,29 +30,14 @@
  */
 package com.axelor.apps.crm.service;
 
-import com.axelor.apps.base.db.Batch;
-import com.axelor.apps.crm.service.batch.BatchEventReminderMessage;
-import com.axelor.apps.message.service.MailAccountService;
-import com.axelor.apps.message.service.MessageService;
-import com.google.inject.Injector;
+import com.axelor.apps.crm.db.Opportunity;
+import com.google.inject.persist.Transactional;
 
-public class EventReminderThread extends Thread {
+public class OpportunityService {
 	
-	private Batch batch;
-	private Injector injector;
-
-	public EventReminderThread(Batch batch, Injector injector) {
-		this.batch = batch;
-		this.injector = injector;
+	@Transactional
+	public void saveOpportunity(Opportunity opportunity){
+		opportunity.save();
 	}
-
-	@Override
-	public void run() {
-		
-		new BatchEventReminderMessage(injector.getInstance(MessageService.class), injector.getInstance(MailAccountService.class)).process();
-	}
-	
-	
-	
 
 }

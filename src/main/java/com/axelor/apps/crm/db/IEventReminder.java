@@ -28,31 +28,23 @@
  * All portions of the code written by Axelor are
  * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  */
-package com.axelor.apps.crm.service;
+package com.axelor.apps.crm.db;
 
-import com.axelor.apps.base.db.Batch;
-import com.axelor.apps.crm.service.batch.BatchEventReminderMessage;
-import com.axelor.apps.message.service.MailAccountService;
-import com.axelor.apps.message.service.MessageService;
-import com.google.inject.Injector;
+/**
+ * Interface of Event object. Enum all static variable of object.
+ * 
+ * @author dubaux
+ * 
+ */
+public interface IEventReminder {
 
-public class EventReminderThread extends Thread {
+
+	/**
+	 * Static duration type select
+	 */
+	static final int DURATION_MINUTES = 1;
+	static final int DURATION_HOURS = 2;
+	static final int DURATION_DAYS = 3;
+	static final int DURATION_WEEKS = 4;
 	
-	private Batch batch;
-	private Injector injector;
-
-	public EventReminderThread(Batch batch, Injector injector) {
-		this.batch = batch;
-		this.injector = injector;
-	}
-
-	@Override
-	public void run() {
-		
-		new BatchEventReminderMessage(injector.getInstance(MessageService.class), injector.getInstance(MailAccountService.class)).process();
-	}
-	
-	
-	
-
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  *
  * The contents of this file are subject to the Common Public
  * Attribution License Version 1.0 (the “License”); you may not use
@@ -26,7 +26,7 @@
  * the Original Code is Axelor.
  *
  * All portions of the code written by Axelor are
- * Copyright (c) 2012-2013 Axelor. All Rights Reserved.
+ * Copyright (c) 2012-2014 Axelor. All Rights Reserved.
  */
 package com.axelor.apps.crm.service.batch;
 
@@ -39,8 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.axelor.apps.base.db.Batch;
-import com.axelor.apps.base.db.Company;
+import com.axelor.apps.base.service.administration.GeneralService;
 import com.axelor.apps.crm.db.EventReminder;
+import com.axelor.apps.crm.db.IEventReminder;
 import com.axelor.apps.crm.service.EventReminderService;
 import com.axelor.apps.crm.service.EventReminderThread;
 import com.axelor.db.JPA;
@@ -53,14 +54,15 @@ public class BatchEventReminder extends BatchStrategy {
 	private static final Logger LOG = LoggerFactory.getLogger(BatchEventReminder.class);
 
 	private boolean stop = false;
+	private LocalDateTime today;
 	
-	@Inject
 	private Injector injector;
 	
 	@Inject
 	public BatchEventReminder(EventReminderService eventReminderService) {
 		
 		super(eventReminderService);
+		this.today = GeneralService.getTodayDateTime().toLocalDateTime();
 	}
 	
 	
@@ -76,7 +78,7 @@ public class BatchEventReminder extends BatchStrategy {
 	protected void process() {
 	
 		this.markEventReminderProcess();
-		
+		this.generateMessageProcess();
 		
 	}
 	
@@ -87,22 +89,24 @@ public class BatchEventReminder extends BatchStrategy {
 			
 			int i = 0;
 			
-			LocalDateTime today = new LocalDateTime();
+			int durationTypeSelect = batch.getCrmBatch().getDurationTypeSelect();
 			
 			List<EventReminder> eventReminderList = EventReminder.all()
-					.filter("self.event.startDateTime - ?1 > ?2", today).fetch();
-			/**
-			 * TODO  A debugger
-			 */
+					.filter("self.event.startDateTime > ?1 AND self.durationTypeSelect = ?2", today, durationTypeSelect).fetch();
 			
 			
 			for(EventReminder eventReminder : eventReminderList)  {
 				
 				try {
-				
-					eventReminder.setIsReminded(true);
-					updateEventReminder(eventReminder);
-					i++;
+					
+					eventReminder = EventReminder.find(eventReminder.getId());
+					
+					if(this.isExpired(eventReminder, durationTypeSelect))  {
+						eventReminder.setIsReminded(true);
+						updateEventReminder(eventReminder);
+						i++;
+					}
+					
 					
 				} catch (Exception e) {
 					
@@ -120,6 +124,42 @@ public class BatchEventReminder extends BatchStrategy {
 				}	
 			}
 		}
+	}
+	
+	
+	private boolean isExpired(EventReminder eventReminder, int durationTypeSelect)  {
+		
+		LocalDateTime startDateTime = eventReminder.getEvent().getStartDateTime();
+		
+		switch (durationTypeSelect) {
+		case IEventReminder.DURATION_MINUTES:
+			
+			if((startDateTime.minusMinutes(eventReminder.getDuration())).isBefore(today))  {
+				return true;
+			}
+			
+		case IEventReminder.DURATION_HOURS:
+								
+			if((startDateTime.minusHours(eventReminder.getDuration())).isBefore(today))  {
+				return true;
+			}
+								
+		case IEventReminder.DURATION_DAYS:
+			
+			if((startDateTime.minusDays(eventReminder.getDuration())).isBefore(today))  {
+				return true;
+			}
+			
+		case IEventReminder.DURATION_WEEKS:
+			
+			if((startDateTime.minusWeeks(eventReminder.getDuration())).isBefore(today))  {
+				return true;
+			}
+
+		default:
+			return false;
+		}
+		
 	}
 	
 	
